@@ -1,4 +1,6 @@
 *.swp
 .directory
 *.autosave
+node_modules
+node_modules/*
 
