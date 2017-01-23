@@ -1,0 +1,16 @@
+{
+  "name": "ewald",
+  "version": "0.0.1",
+  "description": "Web based X-Ray diffraction data alanysis tool",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bytebrew/ewald.git"
+  },
+  "author": "Elvis Teixeira",
+  "license": "Apache-2.0"
+}
