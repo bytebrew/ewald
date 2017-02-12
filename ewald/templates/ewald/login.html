@@ -1,0 +1,28 @@
+{% extends 'ewald/base.html' %}
+{% load static %}
+
+{% block user-head %}
+    <title>Ewald - login</title>
+    <link rel="stylesheet" href={% static "ewald/login.css" %}/>
+{% endblock %}
+
+{% block user-content %}
+<div id="outer">
+    <div id="middle">
+        <div id="inner">
+        <div id="login-header">
+            <h1>Ewald</h1>
+            <h2>Web based X-Ray diffraction data processing</h2>
+        </div>
+        <form id="login-form">
+            <input type="text" name="user-input"
+                placeholder="Username"></input><br>
+            <input type="password" name="password-input"
+                placeholder="Password"></input><br>
+            <input type="submit" value="Login">
+        </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
