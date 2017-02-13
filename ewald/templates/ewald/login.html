@@ -3,7 +3,7 @@
 
 {% block user-head %}
     <title>Ewald - login</title>
-    <link rel="stylesheet" href={% static "ewald/login.css" %}/>
+    <link rel="stylesheet" href={% static "ewald/css/login.css" %}/>
 {% endblock %}
 
 {% block user-content %}
@@ -14,10 +14,10 @@
             <h1>Ewald</h1>
             <h2>Web based X-Ray diffraction data processing</h2>
         </div>
-        <form id="login-form">
-            <input type="text" name="user-input"
+        <form id="login-form" action="login">
+            <input type="text" name="usrname"
                 placeholder="Username"></input><br>
-            <input type="password" name="password-input"
+            <input type="password" name="passwd"
                 placeholder="Password"></input><br>
             <input type="submit" value="Login">
         </form>
