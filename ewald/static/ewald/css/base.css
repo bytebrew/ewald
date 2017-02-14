@@ -11,7 +11,7 @@ html, body{
     font-family: sans-serif;
 }
 
-#top-bar {
+#topbar {
     position: fixed;
     left: 0;
     top: 0;
@@ -20,7 +20,7 @@ html, body{
     background-color: #2471A3;
 }
 
-#user-content {
+#usercontent {
     position: relative;
     top: 38px;
     width: 100%;
