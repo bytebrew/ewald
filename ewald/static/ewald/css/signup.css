@@ -1,0 +1,46 @@
+#outer {
+    display: table;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
+#middle {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#inner {
+    margin-left: auto;
+    margin-right: auto; 
+    width: 460px;
+}
+
+#login-header h1 {
+    font-size: 18pt;
+    color: #34495E;
+    text-align: center;
+    margin: 4px 0;
+}
+
+#login-header h2 {
+    font-size: 12pt;
+    color: #AAB7B8;
+    text-align: center;
+    margin: 4px 0;
+}
+
+#login-header {
+    margin-bottom: 16px;
+}
+
+#login-form input {
+    width: 100%;
+    margin: 4px;
+    padding: 3px;
+}
+
+.lineinput {
+    display: inline-block;
+}
+
