@@ -1,25 +1,21 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-<head lang="en-US">
+<head lang="en">
     <meta charset="utf-8">
-    <link rel="stylesheet" href="{% static "ewald/css/base.css" %}"/>
-    <script src="{% static "ewald/js/thirdparty/jquery-3.1.1.js" %}"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    {% block userhead %}
+    <link rel="stylesheet" href="{% static "/ewald/bootstrap/css/bootstrap-3.3.7.min.css"%}"/>
+    <script src="{% static "/ewald/jquery/js/jquery-3.1.1.min.js"%}"></script>
+    <script src="{% static "/ewald/bootstrap/js/bootstrap-3.3.7.min.js"%}"></script>
+
+    {% block base_head %}
     {% endblock %}
-
 </head>
 <body>
 
-<div id="topbar">
-</div>
-
-<div id="usercontent">
-    {% block usercontent %}
-    {% endblock %}
-</div>
+{% block base_body %}
+{% endblock %}
 
 </body>
 </html>
-

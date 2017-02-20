@@ -1,12 +1,11 @@
-{% extends 'ewald/base.html' %}
+{% extends 'ewald/withbar.html' %}
 {% load static %}
 
-{% block userhead %}
-    <title>Ewald - login</title>
-    <link rel="stylesheet" href="{% static "ewald/css/home.css" %}"/>
+{% block withbar_head %}
+    <title>Ewald - home</title>
+    <link rel="stylesheet" href="{% static "/ewald/css/home.css" %}"/>
 {% endblock %}
 
-{% block usercontent %}
+{% block withbar_body %}
 <h1>Welcome!</h1>
 {% endblock %}
-

@@ -1,12 +1,12 @@
 {% extends 'ewald/base.html' %}
 {% load static %}
 
-{% block userhead %}
+{% block base_head %}
     <title>Ewald - login</title>
-    <link rel="stylesheet" href="{% static "ewald/css/login.css" %}"/>
+    <link rel="stylesheet" href="{% static "/ewald/css/login.css" %}"/>
 {% endblock %}
 
-{% block usercontent %}
+{% block base_body %}
 <div id="outer">
     <div id="middle">
         <div id="inner">
@@ -44,4 +44,3 @@
     });
 </script>
 {% endblock %}
-
