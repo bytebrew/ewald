@@ -1,10 +1,11 @@
 from django.conf.urls import url, include
-from . import views 
+from ewald.views import *
 
 urlpatterns = [
-    url(r'^$', views.default, name='default'),
-    url(r'^home/$', views.home, name='home'),
-    url(r'^login/$', views.login, name='login'),
-    url(r'^signup/$', views.signup, name='signup'),
+    url(r'^$', DefaultView.as_view(), name='default'),
+    url(r'^home/$', HomeView.as_view(), name='home'),
+    url(r'^login/$', LoginView.as_view(), name='login'),
+    url(r'^logout/$', LogoutView.as_view(), name='logout'),
+    url(r'^signup/$', SignupView.as_view(), name='signup'),
 ]
 

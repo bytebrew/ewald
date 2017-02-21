@@ -39,6 +39,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'bytebrew.urls'
+LOGIN_URL = '/login/'
 
 TEMPLATES = [
     {

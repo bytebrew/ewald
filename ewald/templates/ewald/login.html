@@ -38,7 +38,11 @@
                 csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
             },
             success: function() {
-                // nothing
+                window.location.href = "/home";
+            },
+            error: function() {
+                // TODO: improve
+                alert('Login failed');
             }
         });
     });
