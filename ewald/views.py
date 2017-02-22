@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate as auth_check
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
 from django.views import View
 
@@ -49,10 +50,14 @@ class SignupView(View):
         return render(request, 'ewald/signup.html')
 
 
-class HomeView(View):
+class HomeView(LoginRequiredMixin, View):
+    login_url = '/login/'
 
     def get(self, request):
-        return render(request, 'ewald/home.html', context={
-            'username':'Elvis'
-        })
+        context = {
+            'user': {
+                'name': 'Elvis'
+            }
+        }
+        return render(request, 'ewald/home.html', context=context)
 
