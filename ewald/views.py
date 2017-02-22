@@ -4,7 +4,7 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.views import View
 
 
@@ -31,9 +31,9 @@ class LoginView(View):
             password=request.POST['password'])
         if user is not None:
             auth_login(request, user)
-            return redirect('/home')
+            return HttpResponse(status=200)
         else:
-            raise Http404('User not found')
+            return HttpResponse(status=403)
 
 
 class LogoutView(View):
