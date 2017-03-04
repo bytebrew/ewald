@@ -24,7 +24,7 @@ from .loggedmixin import LoggedMixin
 class DefaultView(View):
 
     def get(self, request):
-        if request.user.is_authenticated:
+        if request.user.is_authenticated():
             return redirect('/home')
         else:
             return redirect('/login')
@@ -33,7 +33,7 @@ class DefaultView(View):
 class LoginView(View):
 
     def get(self, request):
-        if request.user.is_authenticated:
+        if request.user.is_authenticated():
             return redirect('/home')
         else:
             return render(request, 'ewald/login.html')

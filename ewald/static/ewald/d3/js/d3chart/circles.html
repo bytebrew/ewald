@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <script src="jquery-1.12.3.min.js"></script>
+    <script src="d3.min.js"></script>
+</head>
+<body>
+
+<script>
+
+var circleRadii = [10, 20, 30, 40];
+
+var SVG = d3.select("body").append("svg")
+    .attr("width", 500)
+    .attr("height", 500)
+    .style("border", "1px solid black");
+
+SVG.selectAll("circle")
+    .data(circleRadii)
+    .enter()
+    .append("circle")
+        .attr("cx", function (d) { return 4*d; })
+        .attr("cy", function (d) { return 4*d; })
+        .attr("r", function (d) { return d; })
+        .style("fill", "green");
+
+
+var xScale = d3.scale.linear()
+                    .domain([0, 500])
+                    .range([20, 480]);
+
+var yScale = d3.scale.linear()
+                    .domain([0, 500])
+                    .range([20, 480]);
+
+
+SVG.append("g")
+        .attr("class", "axis")
+        .attr("transform", "translate(0," + 475 + ")")
+        .call(d3.svg.axis()
+            .scale(xScale)
+            .orient("bottom"));
+
+SVG.append("g")
+        .attr("class", "axis")
+        .attr("transform", "translate(" + 25 + ", 0)")
+        .call(d3.svg.axis()
+            .scale(yScale)
+            .orient("left"));
+
+</script>
+
+</body>
+</html>
