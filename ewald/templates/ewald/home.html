@@ -12,9 +12,11 @@
 {% block withbar_body %}
 <div id="intensity"></div>
 <script>
+    let x = {{ xData }};
+    let y = {{ yData }};
     plot.xyLine('#intensity',
-    [1,2,3,4,5,6,7],
-    [1,2,3,4,5,6,7], {
+    x, y, {
+        width: 800,
         stroke:"red"
     });
 </script>

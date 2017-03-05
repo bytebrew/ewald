@@ -20,6 +20,7 @@ from django.contrib.auth import logout as auth_logout
 from django.http import Http404, HttpResponse
 from django.views import View
 from .loggedmixin import LoggedMixin
+import os
 
 class DefaultView(View):
 
@@ -66,9 +67,18 @@ class SignupView(View):
 class HomeView(LoggedMixin, View):
 
     def get(self, request):
+        x = []
+        y = []
+        with open(os.path.join( os.path.dirname(os.path.abspath(__file__)), '../datasets/data.txt'), 'r') as f:
+            for line in f:
+                xy = line.split(',')
+                x.append(float(xy[0]))
+                y.append(float(xy[1]))
         context = {
             'user': {
                 'name': 'Elvis'
-            }
+            },
+            'xData': str(x),
+            'yData': str(y)
         }
         return render(request, 'ewald/home.html', context=context)

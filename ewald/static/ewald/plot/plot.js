@@ -29,7 +29,9 @@ var plot = {
             padding: 40,
             width: 600,
             height: 350,
-            stroke: "blue"
+            stroke: "blue",
+            strokeWidth: 1.0,
+            fill: null
         };
         if (args) {
             for (var property in args) {
@@ -75,6 +77,8 @@ var plot = {
             .data([pointsData])
             .attr("class", "line")
             .attr("stroke", meta.stroke)
+            .attr("stroke-width", meta.strokeWidth.toString() + 'px')
+            .attr("fill", meta.fill || 'none')
             .attr("d", valueLine);
 
         //Create X axis
