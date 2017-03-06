@@ -37,7 +37,7 @@ router.post('/login', csurfMiddleware, function(req, res) {
 router.get('/logout', function(req, res) {
     // TODO
     res.render(Path.join(__dirname, 'templates/base.pug'), {
-        pageTitle: 'Ewald - home',
+        pageTitle: 'Ewald - TODO',
     });
 });
 
@@ -46,4 +46,3 @@ router.get('/', function(req, res) {
         pageTitle: 'Ewald - home',
     });
 });
-
