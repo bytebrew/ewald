@@ -11,11 +11,11 @@
   "license": "Apache-2.0",
   "dependencies": {
     "body-parser": "^1.17.0",
+    "cookie-parser": "^1.4.3",
     "cookie-session": "^2.0.0-beta.1",
-    "ejs": "^2.5.6",
+    "csurf": "^1.9.0",
     "express": "^4.15.0",
-    "nunjucks": "^3.0.0",
-    "pug": "^2.0.0-beta11",
-    "swig": "^1.4.2"
+    "helmet": "^3.4.1",
+    "pug": "^2.0.0-beta11"
   }
 }

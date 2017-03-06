@@ -16,14 +16,20 @@
 
 const Express = require('express');
 const BodyParser = require('body-parser');
+const CookieParser = require('cookie-parser');
 const Path = require('path');
+const Helmet = require('helmet');
+const CSurf = require('csurf');
 const app = module.exports = Express();
 
 // common settintgs and meddleware
 app.set('view engine', 'pug');
 app.use(BodyParser.json());
+app.use(CookieParser());
 app.use(Express.static(Path.join(__dirname, 'static')));
 app.use(require('./home/sessions.js'));
+app.use(Helmet());
+app.use(CSurf());
 
 // set up main routes and start application
 app.use(require('./home/router.js'));

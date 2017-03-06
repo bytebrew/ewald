@@ -18,20 +18,32 @@ const Express = require('express');
 const Pug = require('pug');
 const Path = require('path');
 const Fs = require('fs');
+const CSurf = require('csurf');
+
 const router = module.exports = Express.Router();
+const csurfMiddleware = CSurf({ cookie: true });
 
 router.get('/login', function(req, res) {
     res.render(Path.join(__dirname, 'templates/login.pug'), {
-        pageTitle: 'Ewald - login'
+        pageTitle: 'Ewald - login',
+        csrfToken: req.csrfToken()
     });
 });
 
-router.post('/login', function(req, res) {
+router.post('/login', csurfMiddleware, function(req, res) {
     res.sendStatus(200);
+});
+
+router.get('/logout', function(req, res) {
+    // TODO
+    res.render(Path.join(__dirname, 'templates/base.pug'), {
+        pageTitle: 'Ewald - home',
+    });
 });
 
 router.get('/', function(req, res) {
     res.render(Path.join(__dirname, 'templates/base.pug'), {
-        pageTitle: 'Ewald - home'
+        pageTitle: 'Ewald - home',
     });
 });
+

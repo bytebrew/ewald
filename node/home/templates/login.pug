@@ -8,6 +8,7 @@ block userbody
         div#middle
             div#inner
                 form#login-form
+                    input(type='hidden' name='csrftoken' value="#{csrfToken}")
                     div.imgcontainer
                         img.avatar(src='/img/icons/crystal1.png' alt='Avatar')
                     div.container
