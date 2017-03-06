@@ -19,8 +19,8 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.http import Http404, HttpResponse
 from django.views import View
-from .loggedmixin import LoggedMixin
 import os
+
 
 class DefaultView(View):
 
@@ -64,12 +64,13 @@ class SignupView(View):
         return render(request, 'ewald/signup.html')
 
 
-class HomeView(LoggedMixin, View):
-
+class HomeView(View):
+    """Ewald main page where the user can start any kind of job"""
     def get(self, request):
         x = []
         y = []
-        with open(os.path.join( os.path.dirname(os.path.abspath(__file__)), '../datasets/data.txt'), 'r') as f:
+        with open(os.path.join( os.path.dirname(os.path.abspath(__file__)),
+                '../datasets/data.txt'), 'r') as f:
             for line in f:
                 xy = line.split(',')
                 x.append(float(xy[0]))
