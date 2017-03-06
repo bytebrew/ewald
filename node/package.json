@@ -1,0 +1,21 @@
+{
+  "name": "ewald",
+  "version": "1.0.0",
+  "description": "A web based X-Ray diffraction data analysis tool",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Elvis Teixeira",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "body-parser": "^1.17.0",
+    "cookie-session": "^2.0.0-beta.1",
+    "ejs": "^2.5.6",
+    "express": "^4.15.0",
+    "nunjucks": "^3.0.0",
+    "pug": "^2.0.0-beta11",
+    "swig": "^1.4.2"
+  }
+}

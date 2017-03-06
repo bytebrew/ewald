@@ -1,0 +1,22 @@
+extends base.pug
+
+block userhead
+    link(rel='stylesheet' href='/css/login.css')
+
+block userbody
+    div#outer
+        div#middle
+            div#inner
+                form#login-form
+                    div.imgcontainer
+                        img.avatar(src='/img/icons/crystal1.png' alt='Avatar')
+                    div.container
+                        label
+                            b Username
+                        input(type='text' placeholder='Enter your user name' name='uname' required)
+                        label
+                            b Password
+                        input(type='password' placeholder='Enter your password' name='passwd' required)
+                        button(type='submit') Login
+                        input(type='checkbox' checked='checked')
+                        | Remember me
