@@ -65,13 +65,13 @@ WSGI_APPLICATION = 'bytebrew.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'ewald',
-        'USER': 'elvis',
-        'PASSWORD': 'q',
-        'PORT': '',
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#        'NAME': 'ewald',
+#        'USER': 'elvis',
+#        'PASSWORD': 'q',
+#        'PORT': '',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -100,10 +100,10 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_COOKIE_AGE = 30 * 60
+SESSION_COOKIE_AGE = 24 * 60 * 60 * 1000 # 24 hours
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
-USERSESSION_MAX_INACTIVITY = SESSION_COOKIE_AGE
+USERSESSION_MAX_INACTIVITY = 1 * 60 * 1000 # minutes
 
 USERSESSION_PUBLIC_URLS = [
     '/login/',

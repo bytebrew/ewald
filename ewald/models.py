@@ -14,5 +14,20 @@
 # limitations under the License.
 
 from django.db import models
+import base64, pickle
 
-# Create your models here.
+class PowderSample(models.Model):
+    """This model represents a powder crystal sample"""
+    nickname = models.CharField(max_length=40)
+    standard_name = models.CharField(max_length=80)
+    _powder_diffrac = models.TextField(db_column='data', blank=True)
+
+    @property
+    def powder_diffrac(self):
+        datadic = pickle.loads(base64.decodestring(self._powder_diffrac))
+        return datadic['angles'], datadic['intensities']
+
+    @powder_diffrac.setter
+    def powder_diffrac(self, angles, intensities):
+        datadic = { 'angles': angles, 'intensities': intensities}
+        self._powder_diffrac = base64.encodestring(pickle.dumps(datadic))
