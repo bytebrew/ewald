@@ -24,10 +24,16 @@ class PowderSample(models.Model):
 
     @property
     def powder_diffrac(self):
-        datadic = pickle.loads(base64.decodestring(self._powder_diffrac))
-        return datadic['angles'], datadic['intensities']
+        """Getter method for the powder diffraction profile, returned
+        as a dictionary with the form
+        { 'angles': angles, 'intensities': intensities}
+        """
+        return pickle.loads(base64.decodestring(self._powder_diffrac))
 
     @powder_diffrac.setter
-    def powder_diffrac(self, angles, intensities):
-        datadic = { 'angles': angles, 'intensities': intensities}
-        self._powder_diffrac = base64.encodestring(pickle.dumps(datadic))
+    def powder_diffrac(self, data):
+        """Stores a powder diffraction pattern as a base64 string in the
+        database. Parameter data should be a dictionary with the form:
+        { 'angles': angles, 'intensities': intensities}
+        """
+        self._powder_diffrac = base64.encodestring(pickle.dumps(data))
