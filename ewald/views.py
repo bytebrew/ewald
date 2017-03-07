@@ -19,6 +19,7 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.http import Http404, HttpResponse
 from django.views import View
+from .models import PowderSample
 import os
 
 
@@ -67,19 +68,13 @@ class SignupView(View):
 class HomeView(View):
     """Ewald main page where the user can start any kind of job"""
     def get(self, request):
-        x = []
-        y = []
-        with open(os.path.join( os.path.dirname(os.path.abspath(__file__)),
-                '../datasets/data.txt'), 'r') as f:
-            for line in f:
-                xy = line.split(',')
-                x.append(float(xy[0]))
-                y.append(float(xy[1]))
+        sample = PowderSample.objects.get(nickname='devsample')
+        sample_data = sample.powder_diffrac
         context = {
             'user': {
                 'name': 'Elvis'
             },
-            'xData': str(x),
-            'yData': str(y)
+            'xData': str(sample_data['angles']),
+            'yData': str(sample_data['intensities'])
         }
         return render(request, 'ewald/home.html', context=context)

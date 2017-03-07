@@ -28,7 +28,8 @@ class PowderSample(models.Model):
         as a dictionary with the form
         { 'angles': angles, 'intensities': intensities}
         """
-        return pickle.loads(base64.decodestring(self._powder_diffrac))
+        return pickle.loads(base64.decodestring(
+            bytes(self._powder_diffrac, 'utf8')))
 
     @powder_diffrac.setter
     def powder_diffrac(self, data):
