@@ -22,9 +22,13 @@ from django.views import View
 from .models import PowderSample
 import os
 
+def ewald_render(request, view, context={}):
+    context['viewinfo'] = request.viewinfo
+    print(context['viewinfo'])
+    return render(request, view, context)
 
 class DefaultView(View):
-
+    """Default view for error conditions of GET /"""
     def get(self, request):
         if request.user.is_authenticated():
             return redirect('/home')
@@ -33,12 +37,12 @@ class DefaultView(View):
 
 
 class LoginView(View):
-
+    """Login view"""
     def get(self, request):
         if request.user.is_authenticated():
             return redirect('/home')
         else:
-            return render(request, 'ewald/login.html')
+            return ewald_render(request, 'ewald/login.html')
 
     def post(self, request):
         user = auth_check(
@@ -52,7 +56,7 @@ class LoginView(View):
 
 
 class LogoutView(View):
-
+    """Logout view"""
     def get(self, request):
         if request.user.is_authenticated:
             auth_logout(request)
@@ -60,9 +64,9 @@ class LogoutView(View):
 
 
 class SignupView(View):
-
+    """View for new user registration"""
     def get(self, request):
-        return render(request, 'ewald/signup.html')
+        return ewald_render(request, 'ewald/signup.html')
 
 
 class HomeView(View):
@@ -71,10 +75,7 @@ class HomeView(View):
         sample = PowderSample.objects.get(nickname='devsample')
         sample_data = sample.powder_diffrac
         context = {
-            'user': {
-                'name': 'Elvis'
-            },
             'xData': str(sample_data['angles']),
             'yData': str(sample_data['intensities'])
         }
-        return render(request, 'ewald/home.html', context=context)
+        return ewald_render(request, 'ewald/home.html', context=context)

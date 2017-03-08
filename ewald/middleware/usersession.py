@@ -36,6 +36,10 @@ class UserSession(object):
             last_request = request.session['last_request_time']
         elapsed = (1./60.) * (now - last_request).total_seconds()
         request.session['last_request_time'] = now
+        # a basic user info to be added to all view contexts
+        setattr(request, 'viewinfo', {
+            'pagetitle': 'Ewald - ' + request.path.split('/')[1]
+        })
         try:
             # conditions for session invalidation are:
             #  - the time since last request exceeds the maximum allowed
@@ -45,6 +49,7 @@ class UserSession(object):
             if request.path not in settings.USERSESSION_PUBLIC_URLS:
                 if not request.user.is_authenticated() or last_request == now:
                     raise UserSessionError
+                request.viewinfo['username'] = request.user.username
         except UserSessionError:
             if not request.user.is_authenticated():
                 auth_logout(request)

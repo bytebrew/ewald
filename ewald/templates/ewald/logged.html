@@ -1,0 +1,39 @@
+{% extends 'ewald/base.html' %}
+{% block base_head %}
+    {% block logged_head %}
+    {% endblock %}
+{% endblock %}
+{% block base_body %}
+<nav class="w3-sidenav w3-teal w3-card-2 w3-animate-left w3-large" style="display:none" id="sidenav">
+    <a href="javascript:void(0)" onclick="closeNav()" class="w3-closenav w3-large w3-xxlarge">
+        &times;
+    </a>
+    <a href="#">Profile</a>
+    <a href="#">Samples</a>
+    <a href="/logout/">Logout</a>
+</nav>
+<div id="main-content">
+    <header class="w3-container w3-teal">
+        <span class="w3-opennav w3-xxlarge" onclick="openNav()" id="openNav" style="display:inline-block">&#9776;</span>
+        <h1 style="display:inline-block">Ewald</h1>
+    </header>
+    <div class="w3-card-8" style="display:inline-block">
+        <div id="intensity"></div>
+    </div>
+</div>
+<script>
+    function openNav() {
+        document.getElementById("main-content").style.marginLeft = "300px";
+        document.getElementById("sidenav").style.width = "300px";
+        document.getElementById("sidenav").style.display = "block";
+        document.getElementById("openNav").style.display = "none";
+    }
+    function closeNav() {
+        document.getElementById("main-content").style.marginLeft = "0%";
+        document.getElementById("sidenav").style.display = "none";
+        document.getElementById("openNav").style.display = "inline-block";
+    }
+</script>
+    {% block logged_body %}
+    {% endblock %}
+{% endblock %}

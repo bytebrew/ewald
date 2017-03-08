@@ -15,6 +15,20 @@
         </form>
     </div>
 </div>
+<div id="login-failed-modal" class="w3-modal w3-animate-opacity">
+    <div class="w3-modal-content w3-card-8">
+      <header class="w3-container w3-teal">
+        <span onclick="$('#login-failed-modal').css('display', 'none')"
+            class="w3-closebtn">&times;</span>
+        <h4>Login failed!</h4>
+      </header>
+      <div class="w3-container">
+        <p>Some text..</p>
+        <p>Some text..</p>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
     $(document).on('submit', '#login-form', function(event) {
         event.preventDefault(); // dont reload the page
@@ -30,8 +44,7 @@
                 window.location.href = "/home/";
             },
             error: function() {
-                // TODO: improve
-                alert('Login failed');
+                $('#login-failed-modal').css('display', 'block');
             }
         });
     });
