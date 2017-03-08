@@ -15,128 +15,120 @@
  */
 
 var plot = {
-    xyLine: function(htmlElement, xData, yData, args) {
-        // Create data points
-        let pointsData = [];
-        let numPoints = Math.min(xData.length, yData.length);
-        for (let i=0; i<numPoints; ++i) {
-            pointsData.push([xData[i], yData[i]]);
+    line: function(args) {
+        if ( ! args.data)
+            throw Error('No data provided!');
+        // Let's guess the schema of the data
+        if (args.data.constructor === Array) {
+            // TODO
+        } else if (args.data.x && args.data.y) {
+            // we re given two arrays x and y, that is easy
+            args.data = this.xyToPoints(args.data.x, args.data.y);
         }
-        this.pointsLine(htmlElement, pointsData, args);
-    },
-    pointsLine: function(htmlElement, pointsData, args) {
-        let meta = {
-            stroke: "blue",
-            strokeWidth: 1.0,
-            fill: null
-        };
-        if (args) {
-            for (var property in args) {
-                if (args.hasOwnProperty(property)) {
-                    meta[property] = args[property];
-                }
-            }
-        }
-
-        let frame = this.createFrame(
-            htmlElement,
-            { // bounds
-                xMin: d3.min(pointsData, function(d) { return d[0]; }),
-                xMax: d3.max(pointsData, function(d) { return d[0]; }),
-                yMin: d3.min(pointsData, function(d) { return d[1]; }),
-                yMax: d3.max(pointsData, function(d) { return d[1]; })
-            },
-            args);
-
         // define the line
-        var valueLine = d3.line()
-            .x(function(d) { return frame['xScale'](d[0]); })
-            .y(function(d) { return frame['yScale'](d[1]); });
-
+        let chart = this.createChart(args);
+        let valueLine = d3.line()
+            .x(function(d) { return chart.x1Scale(d[0]); })
+            .y(function(d) { return chart.y1Scale(d[1]); });
         // Create line plot
-        var lineGraph = frame['svg'].append("path")
-            .data([pointsData])
+        let lineGraph = chart.svg.append("path")
+            .data([args.data])
             .attr("class", "line")
-            .attr("stroke", meta.stroke)
-            .attr("stroke-width", meta.strokeWidth.toString() + 'px')
-            .attr("fill", meta.fill || 'none')
+            .attr("stroke", args.stroke)
+            .attr("stroke-width", args.strokeWidth.toString() + 'px')
+            .attr("fill", args.fill || 'none')
             .attr("d", valueLine);
     },
-    createFrame: function(htmlElement, bounds, args) {
-        let meta = {
+    xyToPoints: function(x, y) {
+        let points = [];
+        let nPts = Math.min(x.length, y.length);
+        for (let i=0; i<nPts; ++i) {
+            points.push([x[i], y[i]]);
+        }
+        return points;
+    },
+    createChart: function(args) {
+        let chart = {
+            bounds: {
+                xMin: d3.min(args.data, function(d) { return d[0]; }),
+                xMax: d3.max(args.data, function(d) { return d[0]; }),
+                yMin: d3.min(args.data, function(d) { return d[1]; }),
+                yMax: d3.max(args.data, function(d) { return d[1]; })
+            },
+            svg: d3.select(args.htmlElement).append("svg")
+        };
+        this.addDefaults(chart, args);
+        this.createAxis(chart, args);
+        return chart;
+    },
+    addDefaults: function(chart, args) {
+        // REQUIRED properties of args:
+        if ( ! args.htmlElement || ! args.data)
+            throw Error('Arguments required: htmlElement and data');
+        // - data
+        let defaults = {
             vertPadding: 40,
             horPadding: 55,
             width: 600,
             height: 350,
-            background: '#F6F6F6'
+            background: '#F6F6F6',
+            stroke: "blue",
+            strokeWidth: 1.0,
+            fill: null
         };
-        if (args) {
-            for (var property in args) {
-                if (args.hasOwnProperty(property)) {
-                    meta[property] = args[property];
-                }
+        for (let prop in defaults) {
+            if ( ! args.hasOwnProperty(prop)) {
+                args[prop] = defaults[prop];
             }
         }
-
-        // Create SVG element
-        $(htmlElement).css('background-color', meta.background);
-        var svg = d3.select(htmlElement)
-            .append("svg")
-            .attr("width", meta.width)
-            .attr("height", meta.height);
-
+    },
+    createAxis: function(chart, args) {
+        // give a 'size' to the plot
+        chart.svg.attr("width", args.width)
+                 .attr("height", args.height);
         // Create X scale and axis
-        let xScale = d3.scaleLinear()
-            .domain([bounds['xMin'], bounds['xMax']])
-            .range([meta.horPadding, meta.width - meta.horPadding * 2]);
-        let xAxis = d3.axisBottom()
-            .scale(xScale)
-            .ticks(Math.floor(meta.width / 80.0) - 1);
-        svg.append("g")
+        chart.x1Scale = d3.scaleLinear()
+            .domain([chart.bounds.xMin, chart.bounds.xMax])
+            .range([args.horPadding, args.width - args.horPadding]);
+        chart.x1Axis = d3.axisBottom()
+            .scale(chart.x1Scale)
+            .ticks(Math.floor(args.width / 60.0) - 1);
+        chart.svg.append("g")
             .attr("class", "axis")
-            .attr("transform", "translate(0," + (meta.height - meta.vertPadding) + ")")
-            .call(xAxis);
-
+            .attr("transform", "translate(0," + (args.height - args.vertPadding) + ")")
+            .call(chart.x1Axis);
         // Create Y scale and axis
-        let yScale = d3.scaleLinear()
-            .domain([bounds['yMin'], bounds['yMax']])
-            .range([meta.height - meta.vertPadding, meta.vertPadding]);
-        let yAxis = d3.axisLeft()
-            .scale(yScale)
-            .ticks(Math.floor(meta.height / 60.0) - 1);
-        svg.append("g")
+        chart.y1Scale = d3.scaleLinear()
+            .domain([chart.bounds.yMin, chart.bounds.yMax])
+            .range([args.height - args.vertPadding, args.vertPadding]);
+        chart.y1Axis = d3.axisLeft()
+            .scale(chart.y1Scale)
+            .ticks(Math.floor(args.height / 50.0) - 1);
+        chart.svg.append("g")
             .attr("class", "axis")
-            .attr("transform", "translate(" + meta.horPadding + ",0)")
-            .call(yAxis);
-
-        // Create top scale and axis
-        let x2Scale = d3.scaleLinear()
-            .domain([bounds['xMin'], bounds['xMax']])
-            .range([meta.horPadding, meta.width - meta.horPadding * 2]);
-        let x2Axis = d3.axisBottom()
-            .scale(x2Scale)
-            .ticks( 0 /* Math.floor(meta.width / 80.0) - 1 */);
-        svg.append("g")
+            .attr("transform", "translate(" + args.horPadding + ",0)")
+            .call(chart.y1Axis);
+        /*
+        chart.x2Scale = d3.scaleLinear()
+            .domain([chart.bounds.xMin, chart.bounds.xMax])
+            .range([args.horPadding, args.width - args.horPadding]);
+        chart.x2Axis = d3.axisBottom()
+            .scale(chart.x2Scale)
+            .ticks(Math.floor(args.width / 60.0) - 1);
+        chart.svg.append("g")
             .attr("class", "axis")
-            .attr("transform", "translate(0," + meta.vertPadding + ")")
-            .call(x2Axis);
-
-        // Create right scale and axis
-        let y2Scale = d3.scaleLinear()
-            .domain([bounds['yMin'], bounds['yMax']])
-            .range([meta.height - meta.vertPadding, meta.vertPadding]);
-        let y2Axis = d3.axisRight()
-            .scale(y2Scale)
-            .ticks( 0 /*Math.floor(meta.height / 60.0) - 1*/);
-        svg.append("g")
+            .attr("transform", "translate(0," + args.vertPadding + ")")
+            .call(chart.x2Axis);
+        chart.y2Scale = d3.scaleLinear()
+            .domain([chart.bounds.yMin, chart.bounds.yMax])
+            .range([args.height - args.vertPadding, args.vertPadding]);
+        chart.y2Axis = d3.axisRight()
+            .scale(chart.y2Scale)
+            .ticks(Math.floor(args.height / 50.0) - 1);
+        chart.svg.append("g")
             .attr("class", "axis")
-            .attr("transform", "translate(" + (meta.width - 2*meta.horPadding) + ",0)")
-            .call(y2Axis);
-
-        return {
-            svg,
-            xScale, xAxis, yScale, yAxis,
-            x2Scale, x2Axis, y2Scale, y2Axis
-        };
+            .attr("transform", "translate(" + (args.width - args.horPadding) + ",0)")
+            .call(chart.y2Axis);
+        */
     }
 }

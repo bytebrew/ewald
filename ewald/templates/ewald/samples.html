@@ -8,18 +8,25 @@
     {% for sample in samples %}
         <div id="powder-chart-{{ forloop.counter0 }}"
                 class="w3-panel w3-card-2 powder-chart"
-                style="display:inline-block; margin:30px 30px;"></div>
-        <br>
-        <script>
-            let x{{ forloop.counter0 }} = {{ sample.x }};
-            let y{{ forloop.counter0 }} = {{ sample.y }};
-            plot.xyLine('#powder-chart-{{ forloop.counter0 }}',
-                x{{ forloop.counter0 }},
-                y{{ forloop.counter0 }}, {
-                    width: 600,
-                    height: 250,
-                    stroke: "red"
-            });
-        </script>
+                style="display:inline-block; margin:30px 30px;"></div><br>
     {% endfor %}
+    <script>
+    let powderData = [
+        {% for sample in samples %}
+            [
+                {{ sample.x }},
+                {{ sample.y }}
+            ],
+        {% endfor %}
+    ];
+    for (let i=0; i<powderData.length; ++i) {
+        plot.line({
+            htmlElement: '#powder-chart-' + i.toString(),
+            data: { x: powderData[i][0], y: powderData[i][1] },
+            width: 600,
+            height: 250,
+            stroke: "red"
+        });
+    }
+    </script>
 {% endblock %}
