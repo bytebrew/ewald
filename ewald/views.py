@@ -13,19 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.contrib.auth import authenticate as auth_check
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.http import Http404, HttpResponse
 from django.views import View
 from .models import PowderSample
-import os
-
-def ewald_render(request, view, context={}):
-    context['viewinfo'] = request.viewinfo
-    print(context['viewinfo'])
-    return render(request, view, context)
+from .middleware.viewinfo import render
 
 class DefaultView(View):
     """Default view for error conditions of GET /"""
@@ -39,12 +34,15 @@ class DefaultView(View):
 class LoginView(View):
     """Login view"""
     def get(self, request):
+        """GETS to the login route retrieve the html page
+        with the login form"""
         if request.user.is_authenticated():
             return redirect('/home')
         else:
-            return ewald_render(request, 'ewald/login.html')
+            return render(request, 'ewald/login.html')
 
     def post(self, request):
+        """POSTS to the login route are the actual login attempts"""
         user = auth_check(
             username=request.POST['username'],
             password=request.POST['password'])
@@ -66,16 +64,26 @@ class LogoutView(View):
 class SignupView(View):
     """View for new user registration"""
     def get(self, request):
-        return ewald_render(request, 'ewald/signup.html')
+        return render(request, 'ewald/signup.html')
 
 
 class HomeView(View):
     """Ewald main page where the user can start any kind of job"""
     def get(self, request):
-        sample = PowderSample.objects.get(nickname='devsample')
-        sample_data = sample.powder_diffrac
-        context = {
-            'xData': str(sample_data['angles']),
-            'yData': str(sample_data['intensities'])
-        }
-        return ewald_render(request, 'ewald/home.html', context=context)
+        return render(request, 'ewald/home.html')
+
+
+class SamplesView(View):
+    """View tht shows a list of samples owned by a user"""
+    def get(self, request):
+        query = PowderSample.objects.all()
+        data = []
+        for item in query:
+            profile = item.powder_diffrac
+            data.append({
+                'x': str(profile['angles']),
+                'y': str(profile['intensities']),
+            })
+        return render(request, 'ewald/samples.html', context={
+            'samples' : data
+        })
