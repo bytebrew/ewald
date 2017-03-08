@@ -10,14 +10,15 @@
 {% endblock %}
 
 {% block withbar_body %}
-<div id="intensity"></div>
+<div id="intensity" style="display:inline-block"></div>
 <script>
     let x = {{ xData }};
     let y = {{ yData }};
     plot.xyLine('#intensity',
         x, y, {
-            width: 800,
-            stroke:"red"
+            width: 600,
+            height: 300,
+            stroke: "red"
     });
 </script>
 {% endblock %}
