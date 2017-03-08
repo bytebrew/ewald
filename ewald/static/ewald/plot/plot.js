@@ -17,18 +17,15 @@
 var plot = {
     xyLine: function(htmlElement, xData, yData, args) {
         // Create data points
-        var pointsData = [];
-        for (let i=0; i<Math.min(xData.length, yData.length); ++i) {
+        let pointsData = [];
+        let numPoints = Math.min(xData.length, yData.length);
+        for (let i=0; i<numPoints; ++i) {
             pointsData.push([xData[i], yData[i]]);
         }
         this.pointsLine(htmlElement, pointsData, args);
     },
     pointsLine: function(htmlElement, pointsData, args) {
-        // plot meta data that can be overriden by the caller parameters
         let meta = {
-            padding: 40,
-            width: 600,
-            height: 350,
             stroke: "blue",
             strokeWidth: 1.0,
             fill: null
@@ -41,56 +38,105 @@ var plot = {
             }
         }
 
-        //Create X scale
-        let xScale = d3.scaleLinear()
-            .domain([d3.min(pointsData, function(d) { return d[0]; }),
-                     d3.max(pointsData, function(d) { return d[0]; })])
-            .range([meta.padding, meta.width - meta.padding * 2]);
-        //Define X axis
-        var xAxis = d3.axisBottom()
-            .scale(xScale)
-            .ticks(5);
-
-        //Create Y scale
-        let yScale = d3.scaleLinear()
-            .domain([d3.min(pointsData, function(d) { return d[1]; }),
-                     d3.max(pointsData, function(d) { return d[1]; })])
-            .range([meta.height - meta.padding, meta.padding]);
-        //Define Y axis
-        var yAxis = d3.axisLeft()
-            .scale(yScale)
-            .ticks(5);
-
-        //Create SVG element
-        var svg = d3.select(htmlElement)
-            .append("svg")
-            .attr("width", meta.width)
-            .attr("height", meta.height);
+        let frame = this.createFrame(
+            htmlElement,
+            { // bounds
+                xMin: d3.min(pointsData, function(d) { return d[0]; }),
+                xMax: d3.max(pointsData, function(d) { return d[0]; }),
+                yMin: d3.min(pointsData, function(d) { return d[1]; }),
+                yMax: d3.max(pointsData, function(d) { return d[1]; })
+            },
+            args);
 
         // define the line
         var valueLine = d3.line()
-            .x(function(d) { return xScale(d[0]); })
-            .y(function(d) { return yScale(d[1]); });
+            .x(function(d) { return frame['xScale'](d[0]); })
+            .y(function(d) { return frame['yScale'](d[1]); });
 
         // Create line plot
-        var lineGraph = svg.append("path")
+        var lineGraph = frame['svg'].append("path")
             .data([pointsData])
             .attr("class", "line")
             .attr("stroke", meta.stroke)
             .attr("stroke-width", meta.strokeWidth.toString() + 'px')
             .attr("fill", meta.fill || 'none')
             .attr("d", valueLine);
+    },
+    createFrame: function(htmlElement, bounds, args) {
+        let meta = {
+            vertPadding: 40,
+            horPadding: 55,
+            width: 600,
+            height: 350,
+            background: '#F6F6F6'
+        };
+        if (args) {
+            for (var property in args) {
+                if (args.hasOwnProperty(property)) {
+                    meta[property] = args[property];
+                }
+            }
+        }
 
-        //Create X axis
+        // Create SVG element
+        $(htmlElement).css('background-color', meta.background);
+        var svg = d3.select(htmlElement)
+            .append("svg")
+            .attr("width", meta.width)
+            .attr("height", meta.height);
+
+        // Create X scale and axis
+        let xScale = d3.scaleLinear()
+            .domain([bounds['xMin'], bounds['xMax']])
+            .range([meta.horPadding, meta.width - meta.horPadding * 2]);
+        let xAxis = d3.axisBottom()
+            .scale(xScale)
+            .ticks(Math.floor(meta.width / 80.0) - 1);
         svg.append("g")
             .attr("class", "axis")
-            .attr("transform", "translate(0," + (meta.height - meta.padding) + ")")
+            .attr("transform", "translate(0," + (meta.height - meta.vertPadding) + ")")
             .call(xAxis);
 
-        //Create Y axis
+        // Create Y scale and axis
+        let yScale = d3.scaleLinear()
+            .domain([bounds['yMin'], bounds['yMax']])
+            .range([meta.height - meta.vertPadding, meta.vertPadding]);
+        let yAxis = d3.axisLeft()
+            .scale(yScale)
+            .ticks(Math.floor(meta.height / 60.0) - 1);
         svg.append("g")
             .attr("class", "axis")
-            .attr("transform", "translate(" + meta.padding + ",0)")
+            .attr("transform", "translate(" + meta.horPadding + ",0)")
             .call(yAxis);
+
+        // Create top scale and axis
+        let x2Scale = d3.scaleLinear()
+            .domain([bounds['xMin'], bounds['xMax']])
+            .range([meta.horPadding, meta.width - meta.horPadding * 2]);
+        let x2Axis = d3.axisBottom()
+            .scale(x2Scale)
+            .ticks( 0 /* Math.floor(meta.width / 80.0) - 1 */);
+        svg.append("g")
+            .attr("class", "axis")
+            .attr("transform", "translate(0," + meta.vertPadding + ")")
+            .call(x2Axis);
+
+        // Create right scale and axis
+        let y2Scale = d3.scaleLinear()
+            .domain([bounds['yMin'], bounds['yMax']])
+            .range([meta.height - meta.vertPadding, meta.vertPadding]);
+        let y2Axis = d3.axisRight()
+            .scale(y2Scale)
+            .ticks( 0 /*Math.floor(meta.height / 60.0) - 1*/);
+        svg.append("g")
+            .attr("class", "axis")
+            .attr("transform", "translate(" + (meta.width - 2*meta.horPadding) + ",0)")
+            .call(y2Axis);
+
+        return {
+            svg,
+            xScale, xAxis, yScale, yAxis,
+            x2Scale, x2Axis, y2Scale, y2Axis
+        };
     }
 }
