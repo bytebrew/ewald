@@ -1,43 +1,20 @@
 {% extends 'ewald/base.html' %}
-{% load static %}
-
-{% block base_head %}
-    <title>Ewald - login</title>
-    <link rel="stylesheet" href="{% static "/ewald/css/login.css" %}"/>
-{% endblock %}
-
 {% block base_body %}
-<div id="outer">
-<div id="middle">
-<div id="inner">
-
-<form id="login-form">
-    {% csrf_token %}
-  <div class="imgcontainer">
-    <img src="{% static "/ewald/img/icons/crystal1.png"%}" alt="Avatar" class="avatar">
-  </div>
-
-  <div class="container">
-    <label><b>Username</b></label>
-    <input type="text" placeholder="Enter Username" name="uname" required>
-
-    <label><b>Password</b></label>
-    <input type="password" placeholder="Enter Password" name="psw" required>
-
-    <button type="submit">Login</button>
-    <input type="checkbox" checked="checked"> Remember me
-  </div>
-
-  <div class="container" style="background-color:#f1f1f1">
-    <button type="button" class="aboutbtn">About Ewald</button>
-    <span class="psw">Forgot <a href="#">password?</a></span>
-  </div>
-</form>
-
+<div class="w3-display-container" style="width:100%;height:100%;">
+    <div class="w3-display-middle w3-card w3-white">
+        <div class="w3-container w3-teal">
+            <p>Ewald</p>
+        </div>
+        <form id="login-form" class="w3-container w3-padding-large">
+             {% csrf_token %}
+            <input name="uname" class="w3-input" type="text" style="min-width:250px">
+            <label class="w3-label">User name</label>
+            <input name="psw" class="w3-input" type="password" style="min-width:250px">
+            <label class="w3-label">Password</label><br>
+            <button class="w3-btn w3-teal" style="margin-top:16px;">Login</button>
+        </form>
+    </div>
 </div>
-</div>
-</div>
-
 <script>
     $(document).on('submit', '#login-form', function(event) {
         event.preventDefault(); // dont reload the page

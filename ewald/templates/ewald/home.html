@@ -1,15 +1,12 @@
-{% extends 'ewald/withbar.html' %}
+{% extends 'ewald/base.html' %}
 {% load static %}
-
-{% block withbar_head %}
-    <title>Ewald - home</title>
-    <link rel="stylesheet" href="{% static "/ewald/css/home.css" %}"/>
+{% block base_head %}
     <link rel="stylesheet" href="{% static "/ewald/plot/plot.css" %}"/>
     <script src="{% static "/ewald/d3/js/d3-4.5.0.js" %}"></script>
     <script src="{% static "/ewald/plot/plot.js" %}"></script>
 {% endblock %}
-
-{% block withbar_body %}
+{% block base_body %}
+<a href="/logout/">Logout</a>
 <div id="intensity"></div>
 <script>
     let x = {{ xData }};

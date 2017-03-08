@@ -1,22 +1,20 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
-<head lang="en">
+<html lang="en">
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link rel="icon" href="{% static "/ewald/img/icons/crystal1.png"%}"/>
-    <link rel="stylesheet" href="{% static "/ewald/bootstrap/css/bootstrap-3.3.7.min.css"%}"/>
+    <link rel="icon" href="{% static "/ewald/img/icons/mainicon.png"%}"/>
+    <link rel="stylesheet" href="{% static "/ewald/w3/css/w3.css"%}"/>
+    <link rel="stylesheet" href="{% static "/ewald/css/base.css"%}"/>
     <script src="{% static "/ewald/jquery/js/jquery-3.1.1.min.js"%}"></script>
-    <script src="{% static "/ewald/bootstrap/js/bootstrap-3.3.7.min.js"%}"></script>
-
+    <title>{{ view.title }}</title>
     {% block base_head %}
     {% endblock %}
 </head>
 <body>
-
-{% block base_body %}
-{% endblock %}
+    {% block base_body %}
+    {% endblock %}
 </body>
 </html>
