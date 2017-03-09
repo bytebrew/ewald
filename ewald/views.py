@@ -22,14 +22,25 @@ from django.views import View
 from .models import PowderSample
 from .middleware.viewinfo import render
 
-class DefaultView(View):
-    """Default view for error conditions of GET /"""
-    def get(self, request):
-        if request.user.is_authenticated():
-            return redirect('/home')
-        else:
-            return redirect('/login')
 
+class SamplesView(View):
+    """View tht shows a list of samples owned by a user"""
+    def get(self, request):
+        query = PowderSample.objects.filter(user__exact=request.user)
+        samples = []
+        for item in query:
+            powder_diffrac = item.powder_diffrac
+            samples.append({
+                'name': item.name,
+                'chemistry': item.chemistry,
+                'locality': item.locality,
+                'source': item.source,
+                'powder_diffrac': str(powder_diffrac),
+            })
+        return render(request, 'ewald/samples.html', context={
+            'samples' : samples,
+        })
+ 
 
 class LoginView(View):
     """Login view"""
@@ -73,20 +84,11 @@ class HomeView(View):
         return render(request, 'ewald/home.html')
 
 
-class SamplesView(View):
-    """View tht shows a list of samples owned by a user"""
+class DefaultView(View):
+    """Default view for error conditions of GET /"""
     def get(self, request):
-        query = PowderSample.objects.filter(user__exact=request.user)
-        samples = []
-        for item in query:
-            powder_diffrac = item.powder_diffrac
-            samples.append({
-                'name': item.name,
-                'chemistry': item.chemistry,
-                'locality': item.locality,
-                'source': item.source,
-                'powder_diffrac': str(powder_diffrac),
-            })
-        return render(request, 'ewald/samples.html', context={
-            'samples' : samples,
-        })
+        if request.user.is_authenticated():
+            return redirect('/home')
+        else:
+            return redirect('/login')
+

@@ -39,11 +39,11 @@ class UserSession(object):
         try:
             # conditions for session invalidation are:
             #  - the time since last request exceeds the maximum allowed
-            #  - the used is not logged in at all
+            #  - used is not logged in and trying to access a restricted url
             if elapsed > settings.USERSESSION_MAX_INACTIVITY:
                 raise UserSessionError
             if request.path not in settings.USERSESSION_PUBLIC_URLS:
-                if not request.user.is_authenticated() or last_request == now:
+                if not request.user.is_authenticated():
                     raise UserSessionError
                 if request.user.last_login.day != now.day:
                     raise UserSessionError
@@ -56,3 +56,4 @@ class UserSession(object):
 
     def __call__(self, request):
         return self.process_request(request)
+

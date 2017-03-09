@@ -24,3 +24,8 @@ urlpatterns = [
     url(r'^signup/$', SignupView.as_view(), name='signup'),
     url(r'^samples/$', SamplesView.as_view(), name='samples'),
 ]
+
+# Make sure no one is logged in on server start up
+from django.contrib.sessions.models import Session
+Session.objects.all().delete()
+
