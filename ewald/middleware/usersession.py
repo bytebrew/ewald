@@ -34,7 +34,7 @@ class UserSession(object):
         last_request = now
         if 'last_request_time' in request.session:
             last_request = request.session['last_request_time']
-        elapsed = (1./60.) * (now - last_request).total_seconds()
+        elapsed = (1./60.) * float((now - last_request).total_seconds())
         request.session['last_request_time'] = now
         try:
             # conditions for session invalidation are:
@@ -44,6 +44,8 @@ class UserSession(object):
                 raise UserSessionError
             if request.path not in settings.USERSESSION_PUBLIC_URLS:
                 if not request.user.is_authenticated() or last_request == now:
+                    raise UserSessionError
+                if request.user.last_login.day != now.day:
                     raise UserSessionError
         except UserSessionError:
             if not request.user.is_authenticated():

@@ -6,9 +6,23 @@
 {% endblock %}
 {% block logged_body %}
     {% for sample in samples %}
-        <div id="powder-chart-{{ forloop.counter0 }}"
-                class="w3-panel w3-card-2 powder-chart"
-                style="display:inline-block; margin:30px 30px;"></div><br>
+        <div id="sample-panel-{{ forloop.counter0 }}"
+                class="w3-panel w3-card-2 sample-panel"
+                style="margin:30px 30px;">
+            <div class="w3-row">
+                <div id="sample-powder-info-{{ forloop.counter0 }}"
+                        class="w3-half w3-container w3-right-align w3-small sample-powder-info"
+                        style="padding-right:40px;">
+                        <h4>{{ sample.name }}</h4>
+                        <p><b>Chemistry:</b><br> {{ sample.chemistry }}</p>
+                        <p><b>Locality:</b><br> {{ sample.locality }}</p>
+                        <p><b>Source:</b><br> {{ sample.source }}</p>
+                </div>
+                <div id="sample-powder-chart-{{ forloop.counter0 }}"
+                        class="w3-half w3-container sample-powder-chart">
+                </div>
+            </div>
+        </div>
     {% endfor %}
     <script>
     (function() {
@@ -22,11 +36,11 @@
         ];
         for (let i=0; i<dataset.length; ++i) {
             plot.line({
-                htmlElement: '#powder-chart-' + i.toString(),
+                htmlElement: '#sample-powder-chart-' + i.toString(),
                 data: { points: dataset[i].data },
                 width: 600,
                 height: 250,
-                stroke: "red",
+                stroke: "green",
             });
         }
     })();
