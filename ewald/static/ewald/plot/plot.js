@@ -55,7 +55,10 @@ var plot = {
             svg: d3.select(args.htmlElement).append("svg"),
         };
         this.addDefaults(chart, args);
-        this.createAxis(chart, args);
+        this.createAxisAndScales(chart, args);
+        this.styleAxisObjects(chart, args);
+        this.addAxisToSvg(chart, args);
+        this.styleAxisElements(chart, args);
         return chart;
     },
     addDefaults: function(chart, args) {
@@ -79,7 +82,45 @@ var plot = {
             }
         }
     },
-    createAxis: function(chart, args) {
+    styleAxisObjects: function(chart, args) {
+        if (args.grid) {
+            chart.bottomAxis
+                .tickSizeOuter(0)
+                .tickSizeInner(- args.height + 2*args.vertPadding);
+            chart.leftAxis
+                .tickSizeOuter(0)
+                .tickSizeInner(- args.width + 2*args.horPadding);
+            if (args.data2 || args.closeFrame) {
+                // TODO
+            }
+        }
+    },
+    styleAxisElements: function(chart, args) {
+        if (args.grid) {
+            $('.tick').addClass('weak');
+        }
+    },
+    addAxisToSvg: function(chart, args) {
+        chart.svg.append("g")
+            .attr("class", "axis")
+            .attr("transform", "translate(0," + (args.height - args.vertPadding) + ")")
+            .call(chart.bottomAxis);
+        chart.svg.append("g")
+            .attr("class", "axis")
+            .attr("transform", "translate(" + args.horPadding + ",0)")
+            .call(chart.leftAxis);
+        if (args.data2 || args.closeFrame) {
+            chart.svg.append("g")
+                .attr("class", "axis")
+                .attr("transform", "translate(" + (args.width - args.horPadding) + ",0)")
+                .call(chart.rightAxis);
+            chart.svg.append("g")
+                .attr("class", "axis")
+                .attr("transform", "translate(0," + args.vertPadding + ")")
+                .call(chart.topAxis);
+        }
+    },
+    createAxisAndScales: function(chart, args) {
         // give a 'size' to the plot
         chart.svg.attr("width", args.width)
                  .attr("height", args.height);
@@ -90,20 +131,12 @@ var plot = {
         chart.bottomAxis = d3.axisBottom()
             .scale(chart.bottomScale)
             .ticks(Math.floor(args.width / 60.0) - 1);
-        chart.svg.append("g")
-            .attr("class", "axis")
-            .attr("transform", "translate(0," + (args.height - args.vertPadding) + ")")
-            .call(chart.bottomAxis);
         chart.leftScale = d3.scaleLinear()
             .domain([chart.bounds.yMin, chart.bounds.yMax])
             .range([args.height - args.vertPadding, args.vertPadding]);
         chart.leftAxis = d3.axisLeft()
             .scale(chart.leftScale)
             .ticks(Math.floor(args.height / 50.0) - 1);
-        chart.svg.append("g")
-            .attr("class", "axis")
-            .attr("transform", "translate(" + args.horPadding + ",0)")
-            .call(chart.leftAxis);
         // secondary (top and right) axis are created if needed
         if (args.data2 || args.closeFrame) {
             chart.topScale = d3.scaleLinear()
@@ -114,10 +147,6 @@ var plot = {
                 chart.topAxis.ticks(Math.floor(args.width / 60.0) - 1)
             else
                 chart.topAxis.ticks(0).tickSizeOuter(0);
-            chart.svg.append("g")
-                .attr("class", "axis")
-                .attr("transform", "translate(0," + args.vertPadding + ")")
-                .call(chart.topAxis);
             chart.rightScale = d3.scaleLinear()
                 .domain([chart.bounds.yMin, chart.bounds.yMax])
                 .range([args.height - args.vertPadding, args.vertPadding]);
@@ -126,10 +155,6 @@ var plot = {
                 chart.rightAxis.ticks(Math.floor(args.height / 50.0) - 1);
             else
                 chart.rightAxis.ticks(0).tickSizeOuter(0);
-            chart.svg.append("g")
-                .attr("class", "axis")
-                .attr("transform", "translate(" + (args.width - args.horPadding) + ",0)")
-                .call(chart.rightAxis);
         }
     }
 }

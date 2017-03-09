@@ -3,6 +3,7 @@
 {% block logged_head %}
     <script src="{% static "/ewald/d3/js/d3-4.5.0.js"%}"></script>
     <script src="{% static "/ewald/plot/plot.js"%}"></script>
+    <link rel="stylesheet" href="{% static "/ewald/plot/plot.css"%}"/>
 {% endblock %}
 {% block logged_body %}
     {% for sample in samples %}
@@ -41,6 +42,7 @@
                 width: 600,
                 height: 250,
                 stroke: "green",
+                grid: true
             });
         }
     })();
