@@ -14,12 +14,20 @@
 # limitations under the License.
 
 from django.db import models
+from django.contrib.auth.models import User
 import base64, pickle
 
 class PowderSample(models.Model):
     """This model represents a powder crystal sample"""
-    nickname = models.CharField(max_length=40)
-    standard_name = models.CharField(max_length=80)
+    name = models.CharField(max_length=80)
+    chemistry = models.CharField(max_length=80)
+    locality = models.CharField(max_length=120)
+    source = models.CharField(max_length=120)
+    description = models.CharField(max_length=120)
+    # Relational stuff
+    user = models.ForeignKey(User, on_delete=models.CASCADE,
+        default=lambda: User.objects.get(username='elvis'))
+    # Data representation
     _powder_diffrac = models.TextField(db_column='data', blank=True)
 
     @property
