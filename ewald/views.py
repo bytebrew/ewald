@@ -77,13 +77,14 @@ class SamplesView(View):
     """View tht shows a list of samples owned by a user"""
     def get(self, request):
         query = PowderSample.objects.all()
-        data = []
+        samples = []
         for item in query:
-            profile = item.powder_diffrac
-            data.append({
-                'x': str(profile['angles']),
-                'y': str(profile['intensities']),
+            powder_diffrac = item.powder_diffrac
+            samples.append({
+                'name': item.name,
+                'chemistry': item.chemistry,
+                'powder_diffrac': str(powder_diffrac),
             })
         return render(request, 'ewald/samples.html', context={
-            'samples' : data
+            'samples' : samples,
         })

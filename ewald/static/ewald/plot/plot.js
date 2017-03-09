@@ -19,12 +19,9 @@ var plot = {
         if ( ! args.data)
             throw Error('No data provided!');
         // Let's guess the schema of the data
-        if (args.data.constructor === Array) {
-            // TODO
-        } else if (args.data.x && args.data.y) {
-            // we re given two arrays x and y, that is easy
-            args.data = this.xyToPoints(args.data.x, args.data.y);
-        }
+        // TODO: IMPROVE INPUT DATA MANAGEMENT
+        args.data = args.data.points;
+
         // define the line
         let chart = this.createChart(args);
         let valueLine = d3.line()
