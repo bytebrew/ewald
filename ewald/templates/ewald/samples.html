@@ -35,7 +35,7 @@
             {% endfor %}
         ];
         for (let i=0; i<dataset.length; ++i) {
-            plot.line({
+            plot.plot({
                 htmlElement: '#sample-powder-chart-' + i.toString(),
                 data: { points: dataset[i].data },
                 width: 600,

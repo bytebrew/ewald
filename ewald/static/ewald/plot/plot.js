@@ -15,7 +15,7 @@
  */
 
 var plot = {
-    line: function(args) {
+    plot: function(args) {
         if ( ! args.data)
             throw Error('No data provided!');
         // Let's guess the schema of the data
@@ -25,8 +25,8 @@ var plot = {
         // define the line
         let chart = this.createChart(args);
         let valueLine = d3.line()
-            .x(function(d) { return chart.x1Scale(d[0]); })
-            .y(function(d) { return chart.y1Scale(d[1]); });
+            .x(function(d) { return chart.bottomScale(d[0]); })
+            .y(function(d) { return chart.leftScale(d[1]); });
         // Create line plot
         let lineGraph = chart.svg.append("path")
             .data([args.data])
@@ -50,9 +50,9 @@ var plot = {
                 xMin: d3.min(args.data, function(d) { return d[0]; }),
                 xMax: d3.max(args.data, function(d) { return d[0]; }),
                 yMin: d3.min(args.data, function(d) { return d[1]; }),
-                yMax: d3.max(args.data, function(d) { return d[1]; })
+                yMax: d3.max(args.data, function(d) { return d[1]; }),
             },
-            svg: d3.select(args.htmlElement).append("svg")
+            svg: d3.select(args.htmlElement).append("svg"),
         };
         this.addDefaults(chart, args);
         this.createAxis(chart, args);
@@ -83,49 +83,53 @@ var plot = {
         // give a 'size' to the plot
         chart.svg.attr("width", args.width)
                  .attr("height", args.height);
-        // Create X scale and axis
-        chart.x1Scale = d3.scaleLinear()
+        // create axis and scales
+        chart.bottomScale = d3.scaleLinear()
             .domain([chart.bounds.xMin, chart.bounds.xMax])
             .range([args.horPadding, args.width - args.horPadding]);
-        chart.x1Axis = d3.axisBottom()
-            .scale(chart.x1Scale)
+        chart.bottomAxis = d3.axisBottom()
+            .scale(chart.bottomScale)
             .ticks(Math.floor(args.width / 60.0) - 1);
         chart.svg.append("g")
             .attr("class", "axis")
             .attr("transform", "translate(0," + (args.height - args.vertPadding) + ")")
-            .call(chart.x1Axis);
-        // Create Y scale and axis
-        chart.y1Scale = d3.scaleLinear()
+            .call(chart.bottomAxis);
+        chart.leftScale = d3.scaleLinear()
             .domain([chart.bounds.yMin, chart.bounds.yMax])
             .range([args.height - args.vertPadding, args.vertPadding]);
-        chart.y1Axis = d3.axisLeft()
-            .scale(chart.y1Scale)
+        chart.leftAxis = d3.axisLeft()
+            .scale(chart.leftScale)
             .ticks(Math.floor(args.height / 50.0) - 1);
         chart.svg.append("g")
             .attr("class", "axis")
             .attr("transform", "translate(" + args.horPadding + ",0)")
-            .call(chart.y1Axis);
-        /*
-        chart.x2Scale = d3.scaleLinear()
-            .domain([chart.bounds.xMin, chart.bounds.xMax])
-            .range([args.horPadding, args.width - args.horPadding]);
-        chart.x2Axis = d3.axisBottom()
-            .scale(chart.x2Scale)
-            .ticks(Math.floor(args.width / 60.0) - 1);
-        chart.svg.append("g")
-            .attr("class", "axis")
-            .attr("transform", "translate(0," + args.vertPadding + ")")
-            .call(chart.x2Axis);
-        chart.y2Scale = d3.scaleLinear()
-            .domain([chart.bounds.yMin, chart.bounds.yMax])
-            .range([args.height - args.vertPadding, args.vertPadding]);
-        chart.y2Axis = d3.axisRight()
-            .scale(chart.y2Scale)
-            .ticks(Math.floor(args.height / 50.0) - 1);
-        chart.svg.append("g")
-            .attr("class", "axis")
-            .attr("transform", "translate(" + (args.width - args.horPadding) + ",0)")
-            .call(chart.y2Axis);
-        */
+            .call(chart.leftAxis);
+        // secondary (top and right) axis are created if needed
+        if (args.data2 || args.closeFrame) {
+            chart.topScale = d3.scaleLinear()
+                .domain([chart.bounds.xMin, chart.bounds.xMax])
+                .range([args.horPadding, args.width - args.horPadding]);
+            chart.topAxis = d3.axisTop().scale(chart.topScale);
+            if (args.data2 && args.data2.topScale)
+                chart.topAxis.ticks(Math.floor(args.width / 60.0) - 1)
+            else
+                chart.topAxis.ticks(0).tickSizeOuter(0);
+            chart.svg.append("g")
+                .attr("class", "axis")
+                .attr("transform", "translate(0," + args.vertPadding + ")")
+                .call(chart.topAxis);
+            chart.rightScale = d3.scaleLinear()
+                .domain([chart.bounds.yMin, chart.bounds.yMax])
+                .range([args.height - args.vertPadding, args.vertPadding]);
+            chart.rightAxis = d3.axisRight().scale(chart.rightScale);
+            if (args.data2)
+                chart.rightAxis.ticks(Math.floor(args.height / 50.0) - 1);
+            else
+                chart.rightAxis.ticks(0).tickSizeOuter(0);
+            chart.svg.append("g")
+                .attr("class", "axis")
+                .attr("transform", "translate(" + (args.width - args.horPadding) + ",0)")
+                .call(chart.rightAxis);
+        }
     }
 }
