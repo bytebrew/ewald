@@ -17,7 +17,7 @@ from django.shortcuts import redirect
 from django.contrib.auth import authenticate as auth_check
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
-from django.http import Http404, HttpResponse
+from django.http import HttpResponse
 from django.views import View
 from .models import PowderSample
 from .viewinfo import render
@@ -33,10 +33,32 @@ class SamplesView(View):
         })
 
 
-class ConsoleView(View):
+class SampleView(View):
+    """View tht shows a list of samples owned by a user"""
+    def get(self, request, samp_name, samp_attr):
+        query = PowderSample.objects.filter(name__exact=samp_name)
+        if len(query) == 0:
+            return HttpResponse(status=404)
+        data = query[0]
+        if not hasattr(data, samp_attr):
+            return HttpResponse(status=404)
+        return HttpResponse(
+            json.dumps({ samp_attr: str(getattr(data, samp_attr)) }),
+            content_type='application/jason')
+
+
+class TerminalView(View):
     """A console page for the users to manage their resources"""
     def get(self, request):
-        return render(request, 'ewald/console.html')
+        return render(request, 'ewald/terminal.html')
+
+
+class TerminalCommandView(View):
+    """Process terminal commands"""
+    def post(self, request):
+        print('Received terminal command:', request.POST['cmd'])
+        # Process command
+        return HttpResponse('NotImplemented', status=200)
 
 
 class LoginView(View):

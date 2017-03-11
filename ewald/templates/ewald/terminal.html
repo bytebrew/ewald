@@ -1,0 +1,23 @@
+{% extends 'ewald/logged.html' %}
+{% load static %}
+{% block logged_head %}
+    {% csrf_token %}
+    <script src="{% static "/ewald/terminal/terminal.js"%}"></script>
+{% endblock %}
+{% block logged_body %}
+    <textarea class="terminal-widget" autofocus="true"></textarea>
+    <script>
+        let myTerminal = new terminal.Terminal({
+            textArea: $('.terminal-widget')[0],
+            prompt: '{{ viewinfo.username }}@ewald: ',
+            style: {
+                fontFamily: 'SourceCodePro',
+                minWidth: 'calc(100% - 60px)',
+                maxWidth: 'calc(100% - 60px)',
+            },
+            serverTokens: {
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            }
+        });
+    </script>
+{% endblock %}

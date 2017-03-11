@@ -20,7 +20,11 @@ from ewald.views import *
 urlpatterns = [
     url(r'^home/$', HomeView.as_view(), name='home'),
     url(r'^samples/$', SamplesView.as_view(), name='samples'),
-    url(r'^console/$', ConsoleView.as_view(), name='console'),
+    url(r'^sample/(?P<samp_name>[a-zA-Z_-]+)/(?P<samp_attr>[a-zA-Z_-]+)$',
+        SampleView.as_view(), name='sample'),
+    url(r'^terminal/$', TerminalView.as_view(), name='terminal'),
+    url(r'^terminal/command/$',
+        TerminalCommandView.as_view(), name='terminal_command'),
     url(r'^login/$', LoginView.as_view(), name='login'),
     url(r'^logout/$', LogoutView.as_view(), name='logout'),
     url(r'^signup/$', SignupView.as_view(), name='signup'),

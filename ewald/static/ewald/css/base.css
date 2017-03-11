@@ -1,3 +1,8 @@
+@font-face {
+    font-family: 'SourceCodePro';
+    src: url('/static/ewald/fonts/SourceCodePro-Regular.ttf')
+}
+
 html, body{
     margin: 0 0;
     padding: 0 0;

@@ -2,7 +2,7 @@
 
 Web based X-Ray diffraction data alanysis tool.
 
-**This is still a concept! No actual data processing algorithms is yet there**
+**This is still a concept! No actual data processing algorithms are there yet**
 
 ## Data visualization
 
