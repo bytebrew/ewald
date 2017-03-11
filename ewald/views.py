@@ -20,27 +20,24 @@ from django.contrib.auth import logout as auth_logout
 from django.http import Http404, HttpResponse
 from django.views import View
 from .models import PowderSample
-from .middleware.viewinfo import render
+from .viewinfo import render
+import json
 
 
 class SamplesView(View):
     """View tht shows a list of samples owned by a user"""
     def get(self, request):
         query = PowderSample.objects.filter(user__exact=request.user)
-        samples = []
-        for item in query:
-            powder_diffrac = item.powder_diffrac
-            samples.append({
-                'name': item.name,
-                'chemistry': item.chemistry,
-                'locality': item.locality,
-                'source': item.source,
-                'powder_diffrac': str(powder_diffrac),
-            })
         return render(request, 'ewald/samples.html', context={
-            'samples' : samples,
+            'samples' : query,
         })
- 
+
+
+class ConsoleView(View):
+    """A console page for the users to manage their resources"""
+    def get(self, request):
+        return render(request, 'ewald/console.html')
+
 
 class LoginView(View):
     """Login view"""
@@ -91,4 +88,3 @@ class DefaultView(View):
             return redirect('/home')
         else:
             return redirect('/login')
-

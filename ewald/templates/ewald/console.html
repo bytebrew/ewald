@@ -1,0 +1,29 @@
+{% extends 'ewald/logged.html' %}
+{% load static %}
+{% block logged_head %}
+    <link rel="stylesheet" href="{% static "/ewald/css/console.css"%}"/>
+{% endblock %}
+{% block logged_body %}
+    <textarea class="console-widget" autofocus></textarea>
+    <script>
+    (function() {
+        let prompt = '{{ viewinfo.username }}@ewald: ',
+            textarea = $('.console-widget');
+        function showPrompt() { textarea.val(textarea.val() + '\n' + prompt); }
+        textarea.val(prompt);
+        textarea.keydown(function(event) {
+            if (event.keyCode == 13) {
+                event.preventDefault();
+                let content = textarea.val();
+                let lastCommand = content.substr(
+                    content.lastIndexOf(prompt) + prompt.length);
+                /* TODO:
+                if (lastCommand.length > 1)
+                    ClientConsole.executeCommand(lastCommand);
+                */
+                showPrompt();
+            }
+        });
+    })();
+    </script>
+{% endblock %}

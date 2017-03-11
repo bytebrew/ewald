@@ -14,18 +14,20 @@
 # limitations under the License.
 
 from django.conf.urls import url, include
+from django.conf import settings
 from ewald.views import *
 
 urlpatterns = [
-    url(r'^$', DefaultView.as_view(), name='default'),
     url(r'^home/$', HomeView.as_view(), name='home'),
+    url(r'^samples/$', SamplesView.as_view(), name='samples'),
+    url(r'^console/$', ConsoleView.as_view(), name='console'),
     url(r'^login/$', LoginView.as_view(), name='login'),
     url(r'^logout/$', LogoutView.as_view(), name='logout'),
     url(r'^signup/$', SignupView.as_view(), name='signup'),
-    url(r'^samples/$', SamplesView.as_view(), name='samples'),
+    url(r'^$', DefaultView.as_view(), name='default'),
 ]
 
 # Make sure no one is logged in on server start up
-from django.contrib.sessions.models import Session
-Session.objects.all().delete()
-
+if not settings.DEBUG:
+    from django.contrib.sessions.models import Session
+    Session.objects.all().delete()

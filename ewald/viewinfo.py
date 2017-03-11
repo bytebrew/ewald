@@ -21,7 +21,7 @@ def render(request, template_name, context=None, content_type=None,
     to the displayed in views"""
     ewald_context = {
         'viewinfo' : {
-            'urlname' : 'Ewald - ' + request.path.split('/')[1]
+            'urlname' : 'Ewald - ' + request.path.split('/')[1],
         }
     }
     if request.user.is_authenticated():
@@ -30,14 +30,3 @@ def render(request, template_name, context=None, content_type=None,
         ewald_context.update(context)
     return django_render(
         request, template_name, ewald_context, content_type, status, using)
-
-class ViewInfo(object):
-    def __init__(self, get_response):
-        self.get_response = get_response
-
-    def process_request(self, request):
-        response = self.get_response(request)
-        return response
-
-    def __call__(self, request):
-        return self.process_request(request)
