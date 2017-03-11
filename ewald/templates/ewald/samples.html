@@ -35,19 +35,20 @@
                 },
             {% endfor %}
         ];
+        let charts = [];
         for (let i=0; i<dataset.length; ++i) {
-            plot.plot({
+            charts.push(new plot.Chart({
                 container: '#sample-powder-chart-' + i.toString(),
                 width: 600,
                 height: 250,
                 grid: true,
                 frame: true,
-                data: [{
-                    points: dataset[i].data,
+                series: [{
+                    data: dataset[i].data,
                     stroke: (i % 2 == 0) ? "green" : "red",
                     strokeWidth: 1.0,
                 }],
-            });
+            }));
         }
     })();
     </script>
