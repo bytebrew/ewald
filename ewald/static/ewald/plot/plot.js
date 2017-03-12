@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-var plot = { VERSION: '0.2' };
+var plot = { VERSION: 0.2 };
 
 plot.Chart = function(args) {
     // There are some required arguments
@@ -63,19 +63,34 @@ plot.__defaults__ = {
 };
 
 plot.__updateBounds__ = function(chart) {
-    let bounds = {
-        xMin: d3.min(chart.series[0].data, function(d) { return d[0]; }),
-        xMax: d3.max(chart.series[0].data, function(d) { return d[0]; }),
-        yMin: d3.min(chart.series[0].data, function(d) { return d[1]; }),
-        yMax: d3.max(chart.series[0].data, function(d) { return d[1]; }),
+    let initBound = {
+        xMin: Number.MAX_VALUE,
+        xMax: Number.MIN_VALUE,
+        yMin: Number.MAX_VALUE,
+        yMax: Number.MIN_VALUE
     };
-    for (series of chart.series) {
-        bounds.xMin = Math.min(bounds.xMin, d3.min(series.data, function(d) { return d[0]; }));
-        bounds.xMax = Math.max(bounds.xMax, d3.max(series.data, function(d) { return d[0]; }));
-        bounds.yMin = Math.min(bounds.yMin, d3.min(series.data, function(d) { return d[1]; }));
-        bounds.yMax = Math.max(bounds.yMax, d3.max(series.data, function(d) { return d[1]; }));
-    };
-    chart.bounds = [ bounds, bounds ];
+    let arrayBounds = (a) => a.reduce((c, n) => {
+        return {
+            xMin: Math.min(c.xMin, n[0]),
+            xMax: Math.max(c.xMax, n[0]),
+            yMin: Math.min(c.yMin, n[1]),
+            yMax: Math.max(c.yMax, n[1])
+        }}, initBound);
+    let selectBounds = (b1, b2) => {
+        return {
+            xMin: Math.min(b1.xMin, b2.xMin),
+            xMax: Math.max(b1.xMax, b2.xMax),
+            yMin: Math.min(b1.yMin, b2.yMin),
+            yMax: Math.max(b1.yMax, b2.yMax)
+        }};
+    chart.bounds = chart.series.reduce((c, n) => {
+        c[n.axis == 2 ? 1 : 0].push(n.data);
+        return c;
+    }, [[],[]])
+    .map((d) => d.reduce((c, n) => {
+        let b = arrayBounds(n);
+        return selectBounds(c, b);
+    }, initBound));
 }
 
 plot.__createSVG__ = function(chart) {
@@ -143,15 +158,10 @@ plot.__addSVGAxis__ = function(chart) {
 }
 
 plot.__createSeries__ = function(chart) {
-    for (series of chart.series) {
-        let plotObj = d3.line();
-        if (series.axis && series.axis === 'right') {
-                plotObj.x(function(d) { return chart.scaleBottom(d[0]); })
-                plotObj.y(function(d) { return chart.scaleLeft(d[1]); });
-        } else {
-            plotObj.x(function(d) { return chart.scaleBottom(d[0]); })
-            plotObj.y(function(d) { return chart.scaleLeft(d[1]); });
-        }
+    let plotObj = d3.line();
+    for (let series of chart.series) {
+        plotObj.x(function(d) { return chart.scaleBottom(d[0]); });
+        plotObj.y(function(d) { return chart.scaleLeft(d[1]); });
         let plotElem = chart.svg.append("path")
             .data([series.data])
             .attr("class", "line")

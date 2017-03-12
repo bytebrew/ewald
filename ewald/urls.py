@@ -14,7 +14,6 @@
 # limitations under the License.
 
 from django.conf.urls import url, include
-from django.conf import settings
 from ewald.views import *
 
 urlpatterns = [
@@ -32,6 +31,5 @@ urlpatterns = [
 ]
 
 # Make sure no one is logged in on server start up
-if not settings.DEBUG:
-    from django.contrib.sessions.models import Session
-    Session.objects.all().delete()
+from django.contrib.sessions.models import Session
+Session.objects.all().delete()
