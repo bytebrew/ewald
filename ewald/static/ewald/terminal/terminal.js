@@ -49,18 +49,80 @@ terminal.Terminal = function(args) {
     for (let prop in this.style) {
         textArea.style[prop] = this.style[prop];
     }
-    // set the key event handler to add the prompt and send the command
-    // to the execution engine
+    // Of cource we start we a prompt
     textArea.value = prompt;
+
+    // Capture interesting gui events and save cursor position for the case of
+    // events that put the cursor before the last prompt (invalid in terminals)
+    // for key events
     textArea.onkeydown = function(event) {
+        self.savedCursor = self.cursor();
         if (event.keyCode == 13) {
-            event.preventDefault();
-            self.onEnterPressed();
+            self.onEnterPressed(event);
+        } else if (event.keyCode >= 35 && event.keyCode <= 36) {
+            self.checkCursorDown('home_end', event);
+        } else if (event.keyCode >= 37 && event.keyCode <= 40) {
+            self.checkCursorDown('arrow', event);
+        }
+    }
+    textArea.onkeyup = function(event) {
+        else if (event.keyCode >= 35 && event.keyCode <= 36) {
+            self.checkCursorUp('home_end', event);
+        } else if (event.keyCode >= 37 && event.keyCode <= 40) {
+            self.checkCursorUp('arrow', event);
+        }
+    }
+    // The same for mouse events
+    textArea.onmousedown = function(event) {
+        self.savedCursor = self.cursor();
+    }
+    textArea.onmouseup = function(event) {
+        self.checkCursorUp('mouse', event);
+    }
+}
+
+terminal.Terminal.prototype.cursor = function (start, end) {
+    if (!start && !end) {
+        return this.textArea.selectionStart;
+    }
+    this.textArea.selectionStart = start;
+    this.textArea.selectionEnd = end || start;
+}
+
+terminal.Terminal.prototype.checkCursorDown = function(cause, event) {
+    // don't allow the cursor to go before the last prompt
+    // let's emulate the behaviour of a linux terminal
+    let lastPromptEnd = this.textArea.value.
+        lastIndexOf(this.prompt) + this.prompt.length;
+    let selectionStart = this.textArea.selectionStart;
+    let selectionEnd = this.textArea.selectionEnd;
+
+    // TODO
+}
+
+terminal.Terminal.prototype.checkCursorUp = function(cause, event) {
+    // don't allow the cursor to go before the last prompt
+    // let's emulate the behaviour of a linux terminal
+    let lastPromptEnd = this.textArea.value.
+        lastIndexOf(this.prompt) + this.prompt.length;
+    let selectionStart = this.textArea.selectionStart;
+    let selectionEnd = this.textArea.selectionEnd;
+
+    if (this.cursor() <= lastPromptEnd) {
+        if (cause === 'mouse' && selectionStart == selectionEnd) {
+            this.cursor(this.savedCursor);
+        } else if (cause === 'arrow') {
+            if (event.keyCode == 37) {
+                this.cursor(lastPromptEnd);
+            } else {
+                this.cursor(this.savedCursor);
+            }
         }
     }
 }
 
-terminal.Terminal.prototype.onEnterPressed = function(command) {
+terminal.Terminal.prototype.onEnterPressed = function(event) {
+    event.preventDefault();
     let content = this.textArea.value;
     let lastCommand = content.substr(
         content.lastIndexOf(this.prompt) + this.prompt.length);
@@ -73,6 +135,8 @@ terminal.Terminal.prototype.postCommand = function(command) {
     let postData = { cmd: command };
     let self = this;
     if (this.serverTokens) {
+        // These user defined values to be passed to servers are useful for
+        // security e.g: CSRF tokens
         for (let prop in this.serverTokens) {
             postData[prop] = this.serverTokens[prop];
         }
@@ -97,12 +161,11 @@ terminal.Terminal.prototype.postCommand = function(command) {
 }
 
 terminal.Terminal.prototype.onCommandFinished = function(args) {
-    let self = this;
     let commandOutput = '';
     if (args.data) {
-            commandOutput = args.data;
+        commandOutput = args.data;
     }
-    self.textArea.value = self.textArea.value +
-        '\n' + commandOutput + '\n' + self.prompt;
-    self.textArea.scrollTop = self.textArea.scrollHeight;
+    this.textArea.value = this.textArea.value +
+        '\n' + commandOutput + '\n' + this.prompt;
+    this.textArea.scrollTop = this.textArea.scrollHeight;
 }

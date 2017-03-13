@@ -1,11 +1,11 @@
 {% extends 'ewald/logged.html' %}
 {% load static %}
 {% block logged_head %}
-    {% csrf_token %}
     <script src="{% static "/ewald/terminal/terminal.js"%}"></script>
 {% endblock %}
 {% block logged_body %}
     <textarea class="terminal-widget" autofocus="true"></textarea>
+    {% csrf_token %}
     <script>
         let myTerminal = new terminal.Terminal({
             textArea: $('.terminal-widget')[0],
