@@ -51,25 +51,17 @@ terminal.Terminal = function(args) {
     }
     // Of cource we start we a prompt
     textArea.value = prompt;
-
     // Capture interesting gui events and save cursor position for the case of
     // events that put the cursor before the last prompt (invalid in terminals)
     // for key events
     textArea.onkeydown = function(event) {
         self.savedCursor = self.cursor();
         if (event.keyCode == 13) {
-            self.onEnterPressed(event);
-        } else if (event.keyCode >= 35 && event.keyCode <= 36) {
-            self.checkCursorDown('home_end', event);
+            self.onEnterPress(event);
+        } else if (event.keyCode == 36) {
+            self.checkCursor('home', event);
         } else if (event.keyCode >= 37 && event.keyCode <= 40) {
-            self.checkCursorDown('arrow', event);
-        }
-    }
-    textArea.onkeyup = function(event) {
-        else if (event.keyCode >= 35 && event.keyCode <= 36) {
-            self.checkCursorUp('home_end', event);
-        } else if (event.keyCode >= 37 && event.keyCode <= 40) {
-            self.checkCursorUp('arrow', event);
+            self.checkCursor('arrow', event);
         }
     }
     // The same for mouse events
@@ -77,7 +69,7 @@ terminal.Terminal = function(args) {
         self.savedCursor = self.cursor();
     }
     textArea.onmouseup = function(event) {
-        self.checkCursorUp('mouse', event);
+        self.checkCursor('mouse', event);
     }
 }
 
@@ -89,39 +81,46 @@ terminal.Terminal.prototype.cursor = function (start, end) {
     this.textArea.selectionEnd = end || start;
 }
 
-terminal.Terminal.prototype.checkCursorDown = function(cause, event) {
+terminal.Terminal.prototype.checkCursor = function(cause, event) {
     // don't allow the cursor to go before the last prompt
     // let's emulate the behaviour of a linux terminal
     let lastPromptEnd = this.textArea.value.
         lastIndexOf(this.prompt) + this.prompt.length;
     let selectionStart = this.textArea.selectionStart;
     let selectionEnd = this.textArea.selectionEnd;
-
-    // TODO
-}
-
-terminal.Terminal.prototype.checkCursorUp = function(cause, event) {
-    // don't allow the cursor to go before the last prompt
-    // let's emulate the behaviour of a linux terminal
-    let lastPromptEnd = this.textArea.value.
-        lastIndexOf(this.prompt) + this.prompt.length;
-    let selectionStart = this.textArea.selectionStart;
-    let selectionEnd = this.textArea.selectionEnd;
-
-    if (this.cursor() <= lastPromptEnd) {
-        if (cause === 'mouse' && selectionStart == selectionEnd) {
-            this.cursor(this.savedCursor);
-        } else if (cause === 'arrow') {
-            if (event.keyCode == 37) {
-                this.cursor(lastPromptEnd);
-            } else {
-                this.cursor(this.savedCursor);
-            }
+    // on mouse 'up' check the cursor in invalid position AND
+    // there is no text selection
+    if (cause === 'mouse' &&
+        selectionStart < lastPromptEnd &&
+        selectionStart == selectionEnd) {
+            this.cursor(lastPromptEnd);
+    }
+    // on an arrow key pres check it will not put the sursor
+    // in an invalid position
+    // arrow left  ==> prevent from going over the prompt
+    // arrows up and down ==> turn into scrolling
+    if (cause === 'arrow') {
+        if (event.keyCode == 37 && selectionStart == lastPromptEnd) {
+            event.preventDefault();
         }
+        else if (event.keyCode == 38) {
+            event.preventDefault();
+            this.textArea.scrollTop -= 10;
+        }
+        else if (event.keyCode == 40) {
+            event.preventDefault();
+            this.textArea.scrollTop += 10;
+        }
+    }
+    // on home key go to just after the prompt instead of
+    // beginning of line
+    if (cause === 'home') {
+        event.preventDefault();
+        this.cursor(lastPromptEnd);
     }
 }
 
-terminal.Terminal.prototype.onEnterPressed = function(event) {
+terminal.Terminal.prototype.onEnterPress = function(event) {
     event.preventDefault();
     let content = this.textArea.value;
     let lastCommand = content.substr(
