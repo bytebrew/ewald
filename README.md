@@ -1,8 +1,8 @@
 # ewald
 
-Web based X-Ray diffraction data alanysis tool.
+Web based X-Ray diffraction data analysis tool.
 
-**This is still a concept! No actual data processing algorithms are there yet**
+**This is still a concept built on friday nights! Not a production system**
 
 ## Data visualization
 
