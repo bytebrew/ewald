@@ -1,4 +1,4 @@
-# ewald
+# EWALD
 
 Web based X-Ray diffraction data analysis tool.
 
